@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import HomePage from "./HomePage";
 
-const socket = io("http://localhost:5000");
+const socket = io(import.meta.env.VITE_SERVER_URL || "http://localhost:5000");
 
 // --- ANIMATION CONFIGURATION ---
 const pageVariants = {
