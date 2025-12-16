@@ -10,7 +10,8 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", process.env.CLIENT_URL],
+    // FIX 1: Allow both Localhost AND your Vercel Domain
+    origin: ["http://localhost:5173", "https://orbit-chat-web.vercel.app"],
     methods: ["GET", "POST"],
   },
 });
@@ -18,8 +19,10 @@ const io = new Server(server, {
 let waitingUsers = [];
 
 io.on("connection", (socket) => {
+  // ... (Keep all your existing socket logic here) ...
   console.log(`User Connected: ${socket.id}`);
 
+  // ... Paste the rest of your socket events (typing, find_partner, etc.) ...
   socket.on("typing", (roomID) => {
     socket.to(roomID).emit("partner_typing");
   });
@@ -126,8 +129,8 @@ io.on("connection", (socket) => {
   });
 });
 
+// FIX 2: Use the dynamic port for Render
 const PORT = process.env.PORT || 5000;
-
 server.listen(PORT, () => {
-  console.log("SERVER RUNNING ON PORT 5000");
+  console.log(`SERVER RUNNING ON PORT ${PORT}`);
 });
