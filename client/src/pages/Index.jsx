@@ -358,15 +358,14 @@ const Index = () => {
             className="h-dvh flex flex-col bg-background relative"
           >
             {/* Header */}
-            <div className="fixed top-0 left-0 right-0 z-50 px-2 pt-2 pb-0">
-              <div className="glass-panel p-4 flex items-center justify-between shadow-md">
+            <div className="glass-panel m-2 p-4 space-y-3">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                   <span className="text-sm font-medium">
                     Connected to Stranger
                   </span>
                 </div>
-
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -394,22 +393,22 @@ const Index = () => {
                     Drift Away
                   </Button>
                 </div>
+              </div>
 
-                {/* Common Interests */}
-                <div className="flex items-center gap-2 px-1 pb-2 text-sm">
-                  {commonInterests.length > 0 ? (
-                    <div className="flex items-center gap-2 text-primary animate-pulse">
-                      <Sparkles className="w-4 h-4" />
-                      <span className="font-medium">
-                        You both like: {commonInterests.join(", ")}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground text-xs">
-                      No common interests found.
+              {/* Common Interests */}
+              <div className="flex items-center gap-2 px-1 pb-2 text-sm">
+                {commonInterests.length > 0 ? (
+                  <div className="flex items-center gap-2 text-primary animate-pulse">
+                    <Sparkles className="w-4 h-4" />
+                    <span className="font-medium">
+                      You both like: {commonInterests.join(", ")}
                     </span>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground text-xs">
+                    No common interests found.
+                  </span>
+                )}
               </div>
             </div>
 
