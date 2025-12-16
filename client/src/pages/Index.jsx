@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { io } from "socket.io-client";
-import { motion, AnimatePresence } from "framer-motion"; // <--- Import Framer Motion
+import { motion, AnimatePresence } from "framer-motion";
 
 const socket = io("http://localhost:5000");
 
@@ -33,11 +33,14 @@ const Index = () => {
   const [roomID, setRoomID] = useState(null);
   const [waitDuration, setWaitDuration] = useState("");
   const [isChatActive, setIsChatActive] = useState(false);
+  const [isStrangerTyping, setIsStrangerTyping] = useState(false);
 
   // Timer Ref
   const searchTimeoutRef = useRef(null);
   // Auto-scroll ref
   const messagesEndRef = useRef(null);
+  // Typing Ref
+  const typingTimeoutRef = useRef(null);
 
   // --- SOCKET LISTENERS ---
   useEffect(() => {
@@ -68,11 +71,21 @@ const Index = () => {
       setIsChatActive(false);
     });
 
+    socket.on("partner_typing", () => {
+      setIsStrangerTyping(true);
+    });
+
+    socket.on("partner_stop_typing", () => {
+      setIsStrangerTyping(false);
+    });
+
     return () => {
       socket.off("connect");
       socket.off("partner_found");
       socket.off("receive_message");
       socket.off("partner_disconnected");
+      socket.off("partner_typing");
+      socket.off("partner_stop_typing");
     };
   }, []);
 
@@ -145,6 +158,20 @@ const Index = () => {
 
   const handleReport = () => {
     alert("Reported user.");
+  };
+
+  const handleTyping = (e) => {
+    setCurrentMessage(e.target.value);
+
+    if (!roomID) return;
+
+    socket.emit("typing", roomID);
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit("stop_typing", roomID);
+    }, 1000);
   };
 
   // --- RENDER ---
@@ -391,6 +418,26 @@ const Index = () => {
                   </div>
                 </div>
               ))}
+              {isStrangerTyping && (
+                <div className="flex justify-start animate-fade-in">
+                  <div className="glass-panel p-3 rounded-2xl">
+                    <div className="flex gap-1">
+                      <div
+                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                        style={{ animationDelay: "0ms" }}
+                      />
+                      <div
+                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                        style={{ animationDelay: "150ms" }}
+                      />
+                      <div
+                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                        style={{ animationDelay: "300ms" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
@@ -404,7 +451,7 @@ const Index = () => {
                       : "Stranger has disconnected..."
                   }
                   value={currentMessage}
-                  onChange={(e) => setCurrentMessage(e.target.value)}
+                  onChange={handleTyping}
                   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                   className="glass-input flex-1"
                   disabled={!isChatActive}
