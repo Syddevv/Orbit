@@ -17,6 +17,7 @@ const Index = () => {
   const [messages, setMessages] = useState([]);
   const [roomID, setRoomID] = useState(null);
   const [waitDuration, setWaitDuration] = useState("");
+  const [isChatActive, setIsChatActive] = useState(false);
   const searchTimeoutRef = useRef(null);
 
   // Auto-scroll ref
@@ -38,6 +39,7 @@ const Index = () => {
       setAppState("chat");
       setMessages([{ sender: "system", text: "Connected to a stranger." }]);
       setCommonInterests(data.commonInterests || []);
+      setIsChatActive(true);
     });
 
     // Receiving a Message
@@ -51,6 +53,8 @@ const Index = () => {
         ...prev,
         { sender: "system", text: "Stranger has disconnected." },
       ]);
+
+      setIsChatActive(false);
     });
 
     return () => {
@@ -109,6 +113,7 @@ const Index = () => {
     setMessages([]);
 
     // Reuse the exact same logic as start drifting
+    setIsChatActive(false);
     handleStartDrifting();
   };
 
@@ -119,6 +124,7 @@ const Index = () => {
     socket.emit("disconnect_partner");
     setAppState("landing");
     setMessages([]);
+    setIsChatActive(false);
   };
 
   const handleReport = () => {};
@@ -389,6 +395,7 @@ const Index = () => {
             onChange={(e) => setCurrentMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
             className="glass-input flex-1"
+            disabled={!isChatActive}
           ></Input>
 
           <Button
