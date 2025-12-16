@@ -1,7 +1,10 @@
 import { Sparkles, Radio, Home, Send, Flag } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:5000");
 
 const Index = () => {
   const [gender, setGender] = useState("");
@@ -10,18 +13,88 @@ const Index = () => {
   const [appState, setAppState] = useState("landing");
   const [matchingStatus, setMatchingStatus] = useState("Finding match...");
   const [currentMessage, setCurrentMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [roomID, setRoomID] = useState(null);
+
+  // TODO: ask gemini what is the purpose of this auto-scroll
+  // Auto-scroll ref
+  const messagesEndRef = useRef(null);
+
+  // --- SOCKET LISTENERS ---
+  useEffect(() => {
+    // Connection success
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
+
+    // Partner Found -> Switch to Chat
+    socket.on("partner_found", (data) => {
+      setRoomID(data.roomID);
+      setAppState("chat");
+      setMessages([{ sender: "system", text: "Connected to a stranger." }]);
+    });
+
+    // Receiving a Message
+    socket.on("receive_message", (text) => {
+      setMessages((prev) => [...prev, { sender: "partner", text: text }]);
+    });
+
+    // Partner Disconnected
+    socket.on("partner_disconnected", () => {
+      setMessages((prev) => [
+        ...prev,
+        { sender: "system", text: "Stranger has disconnected." },
+      ]);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("partner_found");
+      socket.off("receive_message");
+      socket.off("partner_disconnected");
+    };
+  }, []);
+
+  // Auto-scroll to bottom of chat
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleStartDrifting = () => {
     setAppState("matching");
+    setMatchingStatus("Looking for someone...");
+    // Emit search event to server
+    socket.emit("find_partner", {
+      /* send preferences here later */
+    });
   };
 
-  const handleReturnHome = () => {};
+  const handleSendMessage = () => {
+    if (!currentMessage.trim()) return;
+
+    setMessages((prev) => [...prev, { sender: "me", text: currentMessage }]);
+    socket.emit("send_message", { roomID, message: currentMessage });
+    setCurrentMessage("");
+  };
+
+  const handleNext = () => {
+    socket.emit("disconnect_partner");
+    setRoomID(null);
+    setMessages([]);
+
+    // Start searching again immediately
+    setAppState("matching");
+    setMatchingStatus("Skipping... finding new partner.");
+    socket.emit("find_partner");
+  };
+
+  const handleReturnHome = () => {
+    socket.emit("disconnect_partner");
+    setAppState("landing");
+    setMessages([]);
+  };
 
   const handleReport = () => {};
-
-  const handleNext = () => {};
-
-  const handleSendMessage = () => {};
 
   // Landing Page
   if (appState === "landing") {
@@ -210,7 +283,29 @@ const Index = () => {
       <div className="flex items-center gap-2 text"></div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4"></div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={`flex ${
+              msg.sender === "me" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`max-w-[80%] p-3 rounded-2xl ${
+                msg.sender === "me"
+                  ? "bg-primary text-primary-foreground"
+                  : msg.sender === "system"
+                  ? "text-muted-foreground text-xs italic bg-transparent"
+                  : "bg-muted text-foreground"
+              }`}
+            >
+              {msg.text}
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
 
       {/* Input Area */}
       <div className="glass-panel m-2 p-4">
