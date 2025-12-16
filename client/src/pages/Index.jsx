@@ -179,6 +179,23 @@ const Index = () => {
     }, 1000);
   };
 
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const handleResize = () => {
+      document.documentElement.style.setProperty(
+        "--keyboard-height",
+        `${window.innerHeight - viewport.height}px`
+      );
+    };
+
+    viewport.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => viewport.removeEventListener("resize", handleResize);
+  }, []);
+
   // --- RENDER ---
   return (
     <div className="bg-background min-h-dvh w-full">
