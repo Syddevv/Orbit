@@ -179,26 +179,9 @@ const Index = () => {
     }, 1000);
   };
 
-  useEffect(() => {
-    const viewport = window.visualViewport;
-    if (!viewport) return;
-
-    const handleResize = () => {
-      document.documentElement.style.setProperty(
-        "--keyboard-height",
-        `${window.innerHeight - viewport.height}px`
-      );
-    };
-
-    viewport.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => viewport.removeEventListener("resize", handleResize);
-  }, []);
-
   // --- RENDER ---
   return (
-    <div className="bg-background min-h-dvh w-full">
+    <div className="bg-background min-h-dvh w-full overflow-hidden">
       <AnimatePresence mode="wait">
         {/* LANDING PAGE */}
         {appState === "landing" && <HomePage enterOrbit={handleEnterOrbit} />}
@@ -372,10 +355,10 @@ const Index = () => {
             animate="animate"
             exit="exit"
             transition={pageTransition}
-            className="h-svh flex flex-col bg-background"
+            className="h-dvh flex flex-col bg-background relative"
           >
             {/* Header */}
-            <div className="glass-panel m-2 p-4 sticky top-0 z-50">
+            <div className="glass-panel m-2 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -476,8 +459,8 @@ const Index = () => {
             </div>
 
             {/* Input Area */}
-            <div className="glass-panel m-2 p-4 flex gap-2 bg-background/80 backdrop-blur-xl sticky bottom-0">
-              <div className="flex gap-2 w-full">
+            <div className="glass-panel m-2 p-4 flex-none z-50 bg-background/50 backdrop-blur-xl">
+              <div className="flex gap-2">
                 <Input
                   placeholder={
                     isChatActive
