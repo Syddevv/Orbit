@@ -88,14 +88,6 @@
     /* Custom Shadows for Glass Effect */
     --shadow-glass: 0 8px 32px hsl(222 47% 3% / 0.4);
   }
-  html,
-  body,
-  #root {
-    height: 100%; /* Force full height */
-    width: 100%;
-    overflow: hidden; /* Prevent global scrolling */
-    position: fixed; /* Lock position to prevent iOS bounce */
-  }
 
   /* Reset defaults */
   * {
