@@ -179,23 +179,6 @@ const Index = () => {
     }, 1000);
   };
 
-  useEffect(() => {
-    const viewport = window.visualViewport;
-    if (!viewport) return;
-
-    const handleResize = () => {
-      document.documentElement.style.setProperty(
-        "--keyboard-height",
-        `${window.innerHeight - viewport.height}px`
-      );
-    };
-
-    viewport.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => viewport.removeEventListener("resize", handleResize);
-  }, []);
-
   // --- RENDER ---
   return (
     <div className="bg-background min-h-dvh w-full">
@@ -372,7 +355,7 @@ const Index = () => {
             animate="animate"
             exit="exit"
             transition={pageTransition}
-            className="min-h-svh flex flex-col bg-background"
+            className="h-svh flex flex-col bg-background"
           >
             {/* Header */}
             <div className="glass-panel m-2 p-4 sticky top-0 z-50">
@@ -476,8 +459,8 @@ const Index = () => {
             </div>
 
             {/* Input Area */}
-            <div className="glass-panel m-2 p-4 flex gap-2 flex-none bg-background/50 backdrop-blur-xl">
-              <div className="flex gap-2">
+            <div className="glass-panel m-2 p-4 flex gap-2 bg-background/80 backdrop-blur-xl sticky bottom-0">
+              <div className="flex gap-2 w-full">
                 <Input
                   placeholder={
                     isChatActive
