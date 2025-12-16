@@ -181,7 +181,7 @@ const Index = () => {
 
   // --- RENDER ---
   return (
-    <div className="bg-background min-h-screen w-full overflow-hidden">
+    <div className="bg-background min-h-dvh w-full overflow-hidden">
       <AnimatePresence mode="wait">
         {/* LANDING PAGE */}
         {appState === "landing" && <HomePage enterOrbit={handleEnterOrbit} />}
@@ -355,7 +355,7 @@ const Index = () => {
             animate="animate"
             exit="exit"
             transition={pageTransition}
-            className="h-screen flex flex-col bg-background"
+            className="h-dvh flex flex-col bg-background"
           >
             {/* Header */}
             <div className="glass-panel m-2 p-4 space-y-3">
