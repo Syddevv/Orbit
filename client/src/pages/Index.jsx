@@ -413,7 +413,7 @@ const Index = () => {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-36">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-6">
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
