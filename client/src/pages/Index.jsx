@@ -179,9 +179,26 @@ const Index = () => {
     }, 1000);
   };
 
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const handleResize = () => {
+      document.documentElement.style.setProperty(
+        "--keyboard-height",
+        `${window.innerHeight - viewport.height}px`
+      );
+    };
+
+    viewport.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => viewport.removeEventListener("resize", handleResize);
+  }, []);
+
   // --- RENDER ---
   return (
-    <div className="bg-background min-h-dvh w-full overflow-hidden">
+    <div className="bg-background min-h-dvh w-full">
       <AnimatePresence mode="wait">
         {/* LANDING PAGE */}
         {appState === "landing" && <HomePage enterOrbit={handleEnterOrbit} />}
@@ -459,7 +476,13 @@ const Index = () => {
             </div>
 
             {/* Input Area */}
-            <div className="glass-panel m-2 p-4 flex gap-2 flex-none bg-background/50 backdrop-blur-xl">
+            <div
+              className="glass-panel m-2 p-4 flex gap-2 flex-none bg-background/50 backdrop-blur-xl"
+              style={{
+                marginBottom: "var(--keyboard-height, 0px)",
+                paddingBottom: "env(safe-area-inset-bottom)",
+              }}
+            >
               <div className="flex gap-2">
                 <Input
                   placeholder={
