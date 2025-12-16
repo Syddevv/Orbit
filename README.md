@@ -15,7 +15,8 @@ Orbit is a modern, anonymous chat application designed for serendipitous connect
 - **🔒 Anonymous:** No login or profiles required. Just drift in and out.
 
 ## 📸 Screenshots
-
+<img width="1914" height="943" alt="Screenshot 2025-12-16 152421" src="https://github.com/user-attachments/assets/6daf1cfb-2eed-41de-bfc7-3539fab8753b" />
+<img width="1911" height="943" alt="Screenshot 2025-12-16 152445" src="https://github.com/user-attachments/assets/61c3bccf-8a74-47fb-8015-b18273606f4d" />
 <img width="1899" height="944" alt="Screenshot 2025-12-16 145307" src="https://github.com/user-attachments/assets/fc4ed029-ad4b-4b99-a2e7-95036599fd6c" />
 <img width="1898" height="868" alt="Screenshot 2025-12-16 145318" src="https://github.com/user-attachments/assets/d340d30e-1510-49d3-a4de-94b5589fece3" />
 <img width="1906" height="943" alt="Screenshot 2025-12-16 145326" src="https://github.com/user-attachments/assets/cfc89ed1-4e00-4b77-b943-fcf8a5057b7b" />
