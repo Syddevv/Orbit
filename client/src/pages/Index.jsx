@@ -12,11 +12,13 @@ const Index = () => {
   const [interest, setInterest] = useState("");
   const [appState, setAppState] = useState("landing");
   const [matchingStatus, setMatchingStatus] = useState("Finding match...");
+  const [commonInterests, setCommonInterests] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [roomID, setRoomID] = useState(null);
+  const [waitDuration, setWaitDuration] = useState("");
+  const searchTimeoutRef = useRef(null);
 
-  // TODO: ask gemini what is the purpose of this auto-scroll
   // Auto-scroll ref
   const messagesEndRef = useRef(null);
 
@@ -29,9 +31,13 @@ const Index = () => {
 
     // Partner Found -> Switch to Chat
     socket.on("partner_found", (data) => {
+      // CLEAR TIMER if found
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+
       setRoomID(data.roomID);
       setAppState("chat");
       setMessages([{ sender: "system", text: "Connected to a stranger." }]);
+      setCommonInterests(data.commonInterests || []);
     });
 
     // Receiving a Message
@@ -61,12 +67,29 @@ const Index = () => {
   }, [messages]);
 
   const handleStartDrifting = () => {
+    if (!gender || !lookingFor) {
+      alert("Please select your gender and who you are looking for!");
+      return;
+    }
+
     setAppState("matching");
-    setMatchingStatus("Looking for someone...");
-    // Emit search event to server
-    socket.emit("find_partner", {
-      /* send preferences here later */
-    });
+    setMatchingStatus("Looking for your perfect match...");
+
+    // 1. Emit STRICT search initially
+    const searchData = { gender, lookingFor, interest, strategy: "strict" };
+    socket.emit("find_partner", searchData);
+
+    // 2. Set Timer (if not "forever")
+    if (waitDuration && waitDuration !== "forever") {
+      const ms = parseInt(waitDuration) * 1000;
+
+      searchTimeoutRef.current = setTimeout(() => {
+        setMatchingStatus("Preferences not found. Expanding to anyone...");
+
+        // 3. If time is up, re-emit with ANY strategy
+        socket.emit("find_partner", { ...searchData, strategy: "any" });
+      }, ms);
+    }
   };
 
   const handleSendMessage = () => {
@@ -78,17 +101,21 @@ const Index = () => {
   };
 
   const handleNext = () => {
+    // Clear prev timer if exists
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+
     socket.emit("disconnect_partner");
     setRoomID(null);
     setMessages([]);
 
-    // Start searching again immediately
-    setAppState("matching");
-    setMatchingStatus("Skipping... finding new partner.");
-    socket.emit("find_partner");
+    // Reuse the exact same logic as start drifting
+    handleStartDrifting();
   };
 
   const handleReturnHome = () => {
+    // Clear timer if user cancels
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+
     socket.emit("disconnect_partner");
     setAppState("landing");
     setMessages([]);
@@ -194,6 +221,39 @@ const Index = () => {
                 value={interest}
               ></Input>
             </div>
+
+            {/* Waiting Duration */}
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-foreground">
+                Max Wait Duration
+              </label>
+              <div className="grid grid-cols-4 gap-2 mt-3">
+                <Button
+                  variant={waitDuration === "15" ? "default" : "outline"}
+                  onClick={() => setWaitDuration("15")}
+                >
+                  15 sec
+                </Button>
+                <Button
+                  variant={waitDuration === "30" ? "default" : "outline"}
+                  onClick={() => setWaitDuration("30")}
+                >
+                  30 sec
+                </Button>
+                <Button
+                  variant={waitDuration === "45" ? "default" : "outline"}
+                  onClick={() => setWaitDuration("45")}
+                >
+                  45sec
+                </Button>
+                <Button
+                  variant={waitDuration === "forever" ? "default" : "outline"}
+                  onClick={() => setWaitDuration("forever")}
+                >
+                  Forever
+                </Button>
+              </div>
+            </div>
           </div>
 
           <Button
@@ -280,7 +340,20 @@ const Index = () => {
       </div>
 
       {/* Common Interests */}
-      <div className="flex items-center gap-2 text"></div>
+      <div className="flex items-center gap-2 px-4 pb-2 text-sm">
+        {commonInterests.length > 0 ? (
+          <div className="flex items-center gap-2 text-primary animate-pulse">
+            <Sparkles className="w-4 h-4" />
+            <span className="font-medium">
+              You both like: {commonInterests.join(", ")}
+            </span>
+          </div>
+        ) : (
+          <span className="text-muted-foreground text-xs">
+            No common interests found.
+          </span>
+        )}
+      </div>
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
