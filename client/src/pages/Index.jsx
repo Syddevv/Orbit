@@ -355,11 +355,11 @@ const Index = () => {
             animate="animate"
             exit="exit"
             transition={pageTransition}
-            className="h-dvh flex flex-col bg-background"
+            className="h-dvh flex flex-col bg-background relative"
           >
             {/* Header */}
-            <div className="glass-panel m-2 p-4 space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="fixed top-0 left-0 right-0 z-50 px-2 pt-2 pb-0">
+              <div className="glass-panel p-4 flex items-center justify-between shadow-md">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                   <span className="text-sm font-medium">
@@ -413,7 +413,7 @@ const Index = () => {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-36">
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
@@ -434,20 +434,21 @@ const Index = () => {
                   </div>
                 </div>
               ))}
+
               {isStrangerTyping && (
                 <div className="flex justify-start animate-fade-in">
-                  <div className="glass-panel p-3 rounded-2xl">
+                  <div className="bg-muted p-3 rounded-2xl rounded-tl-none">
                     <div className="flex gap-1">
                       <div
-                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                        className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
                         style={{ animationDelay: "0ms" }}
                       />
                       <div
-                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                        className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
                         style={{ animationDelay: "150ms" }}
                       />
                       <div
-                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                        className="w-2 h-2 bg-foreground/50 rounded-full animate-bounce"
                         style={{ animationDelay: "300ms" }}
                       />
                     </div>
@@ -458,7 +459,7 @@ const Index = () => {
             </div>
 
             {/* Input Area */}
-            <div className="glass-panel m-2 p-4">
+            <div className="glass-panel m-2 p-4 flex-none z-50 bg-background/50 backdrop-blur-xl">
               <div className="flex gap-2">
                 <Input
                   placeholder={
@@ -472,7 +473,6 @@ const Index = () => {
                   className="glass-input flex-1"
                   disabled={!isChatActive}
                 />
-
                 <Button
                   onClick={handleSendMessage}
                   size="icon"
