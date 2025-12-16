@@ -476,13 +476,7 @@ const Index = () => {
             </div>
 
             {/* Input Area */}
-            <div
-              className="glass-panel m-2 p-4 flex gap-2 flex-none bg-background/50 backdrop-blur-xl"
-              style={{
-                marginBottom: "var(--keyboard-height, 0px)",
-                paddingBottom: "env(safe-area-inset-bottom)",
-              }}
-            >
+            <div className="glass-panel m-2 p-4 flex gap-2 flex-none bg-background/50 backdrop-blur-xl">
               <div className="flex gap-2">
                 <Input
                   placeholder={
