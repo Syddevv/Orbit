@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { io } from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import HomePage from "./HomePage";
 
 const socket = io("http://localhost:5000");
 
@@ -96,6 +97,10 @@ const Index = () => {
 
   // --- HANDLERS ---
 
+  const handleEnterOrbit = () => {
+    setAppState("preferences");
+  };
+
   const handleStartDrifting = () => {
     if (!gender || !lookingFor) {
       alert("Please select your gender and preference!");
@@ -151,7 +156,7 @@ const Index = () => {
   const handleReturnHome = () => {
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     socket.emit("disconnect_partner");
-    setAppState("landing");
+    setAppState("preferences");
     setMessages([]);
     setIsChatActive(false);
   };
@@ -179,7 +184,10 @@ const Index = () => {
     <div className="bg-background min-h-screen w-full overflow-hidden">
       <AnimatePresence mode="wait">
         {/* LANDING PAGE */}
-        {appState === "landing" && (
+        {appState === "landing" && <HomePage enterOrbit={handleEnterOrbit} />}
+
+        {/* PREFERENCES PAGE */}
+        {appState === "preferences" && (
           <motion.div
             key="landing"
             variants={pageVariants}
@@ -194,7 +202,7 @@ const Index = () => {
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/20 animate-pulse-glow">
                   <Sparkles className="w-10 h-10 text-primary" />
                 </div>
-                <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <h1 className="text-5xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Orbit
                 </h1>
                 <p className="text-xl text-muted-foreground">
@@ -276,10 +284,18 @@ const Index = () => {
               </div>
 
               <Button
-                className="w-full h-14 text-lg font-semibold glow-primary bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-all cursor-pointer"
+                className="w-full h-14 text-lg font-semibold glow-primary bg-linear-to-r from-primary to-secondary hover:opacity-90 transition-all cursor-pointer"
                 onClick={handleStartDrifting}
               >
                 Start Drifting
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={() => setAppState("landing")}
+                className="w-full text-muted-foreground hover:text-foreground"
+              >
+                ← Back to Home
               </Button>
             </div>
           </motion.div>
