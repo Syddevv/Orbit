@@ -366,6 +366,7 @@ const Index = () => {
                     Connected to Stranger
                   </span>
                 </div>
+
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -393,22 +394,22 @@ const Index = () => {
                     Drift Away
                   </Button>
                 </div>
-              </div>
 
-              {/* Common Interests */}
-              <div className="flex items-center gap-2 px-1 pb-2 text-sm">
-                {commonInterests.length > 0 ? (
-                  <div className="flex items-center gap-2 text-primary animate-pulse">
-                    <Sparkles className="w-4 h-4" />
-                    <span className="font-medium">
-                      You both like: {commonInterests.join(", ")}
+                {/* Common Interests */}
+                <div className="flex items-center gap-2 px-1 pb-2 text-sm">
+                  {commonInterests.length > 0 ? (
+                    <div className="flex items-center gap-2 text-primary animate-pulse">
+                      <Sparkles className="w-4 h-4" />
+                      <span className="font-medium">
+                        You both like: {commonInterests.join(", ")}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground text-xs">
+                      No common interests found.
                     </span>
-                  </div>
-                ) : (
-                  <span className="text-muted-foreground text-xs">
-                    No common interests found.
-                  </span>
-                )}
+                  )}
+                </div>
               </div>
             </div>
 
