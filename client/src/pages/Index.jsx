@@ -355,7 +355,7 @@ const Index = () => {
             animate="animate"
             exit="exit"
             transition={pageTransition}
-            className="h-dvh flex flex-col bg-background relative overflow-hidden"
+            className="fixed inset-0 w-full flex flex-col bg-background overflow-hidden"
           >
             {/* Header */}
             <div className="glass-panel m-2 p-4 space-y-3">
