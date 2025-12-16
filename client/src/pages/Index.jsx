@@ -355,10 +355,10 @@ const Index = () => {
             animate="animate"
             exit="exit"
             transition={pageTransition}
-            className="fixed inset-0 w-full flex flex-col bg-background overflow-hidden"
+            className="min-h-svh flex flex-col bg-background"
           >
             {/* Header */}
-            <div className="glass-panel m-2 p-4 space-y-3">
+            <div className="glass-panel m-2 p-4 sticky top-0 z-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -459,7 +459,7 @@ const Index = () => {
             </div>
 
             {/* Input Area */}
-            <div className="glass-panel m-2 p-4 flex-none z-50 bg-background/50 backdrop-blur-xl">
+            <div className="glass-panel m-2 p-4 flex gap-2 flex-none bg-background/50 backdrop-blur-xl">
               <div className="flex gap-2">
                 <Input
                   placeholder={
